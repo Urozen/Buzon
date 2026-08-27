@@ -8,9 +8,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  
-  <!-- Librería SweetAlert2 -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <style>
     :root {
@@ -330,9 +327,6 @@
       margin-top: auto;
     }
 
-    /* =========================================================
-       REGLAS DE RESPONSIVIDAD (MÓVILES Y PANTALLAS PEQUEÑAS)
-       ========================================================= */
     @media (max-width: 600px) {
       body {
         padding: 10px;
@@ -346,7 +340,6 @@
         padding: 16px 16px 0 16px;
       }
 
-      /* Reorganización del Header */
       .header-logo-row {
         flex-direction: column;
         gap: 10px;
@@ -371,7 +364,6 @@
         width: 60px;
       }
 
-      /* Opciones adaptables */
       .checkbox-group {
         flex-direction: column;
         align-items: flex-start;
@@ -387,7 +379,6 @@
         width: auto;
       }
 
-      /* Campos de contacto */
       .contact-row {
         flex-wrap: wrap;
         gap: 6px;
@@ -459,7 +450,7 @@
 
         <div class="cuentanos-section">
           <h2 class="cuentanos-title">Cuéntanos:</h2>
-          <textarea class="notebook-textarea" id="cuentanosText" required></textarea>
+          <textarea class="notebook-textarea" id="cuentanosText"></textarea>
         </div>
 
         <div class="section-block">
@@ -540,6 +531,15 @@
       });
     });
 
+    function resetFormulario() {
+      document.getElementById('buzonForm').reset();
+      document.querySelectorAll('.custom-check').forEach(c => c.classList.remove('selected'));
+      inputOtro.disabled = true;
+      inputOtro.value = '';
+      tipoMensaje = null;
+      deseaContacto = null;
+    }
+
     document.getElementById('buzonForm').addEventListener('submit', function(e) {
       e.preventDefault();
 
@@ -548,23 +548,13 @@
         valorFinalTipo = 'Otro: ' + inputOtro.value.trim();
       }
 
-      if (!valorFinalTipo) {
-        Swal.fire({
-          title: 'Atención',
-          text: 'Por favor selecciona qué deseas compartir con nosotros.',
-          icon: 'warning',
-          confirmButtonColor: '#ffa924'
-        });
-        return;
-      }
-
       const submitBtn = document.getElementById('btnSubmit');
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ENVIANDO...';
 
       const formData = {
         formType: 'buzon',
-        tipoMensaje: valorFinalTipo,
+        tipoMensaje: valorFinalTipo || 'No especificado',
         cuentanos: document.getElementById('cuentanosText').value,
         deseaContacto: deseaContacto || 'No especificado',
         nombre: document.getElementById('nombreInput').value,
@@ -578,29 +568,12 @@
         body: JSON.stringify(formData)
       })
       .then(() => {
-        Swal.fire({
-          title: '¡Muchas gracias!',
-          text: 'Tus comentarios se han registrado correctamente.',
-          icon: 'success',
-          confirmButtonColor: '#ffa924',
-          confirmButtonText: 'Aceptar'
-        });
-        
-        document.getElementById('buzonForm').reset();
-        document.querySelectorAll('.custom-check').forEach(c => c.classList.remove('selected'));
-        inputOtro.disabled = true;
-        tipoMensaje = null;
-        deseaContacto = null;
+        resetFormulario();
         window.scrollTo({ top: 0, behavior: 'smooth' });
       })
       .catch(err => {
         console.error(err);
-        Swal.fire({
-          title: 'Error',
-          text: 'Ocurrió un error al enviar. Por favor reintenta.',
-          icon: 'error',
-          confirmButtonColor: '#ffa924'
-        });
+        resetFormulario();
       })
       .finally(() => {
         submitBtn.disabled = false;
