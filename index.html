@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buzón Queremos Escucharte - Urozen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Librería para eliminar el encabezado de github.io en los mensajes -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    :root {
+      --primary-orange: #ffa924;
+      --primary-orange-hover: #ff9d0a;
+      --card-bg-light: #fffaf2;
+      --text-dark: #2c3138;
+      --line-gray: #444444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    body {
+      background-color: #1a1a1a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .outer-container {
+      background-color: #ffffff;
+      padding: 16px;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 640px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+    }
+
+    .sheet-card {
+      background-color: #ffffff;
+      border: 2px solid var(--primary-orange);
+      padding: 12px 28px 0 28px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header-logo-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+
+    .brand-logo-img {
+      width: 200px;
+      height: auto;
+      max-height: 280px;
+      display: block;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .header-divider {
+      width: 2px;
+      height: 75px;
+      background-color: #f0e0cc;
+      flex-shrink: 0;
+    }
+
+    .header-title-text {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text-dark);
+      line-height: 1.1;
+      text-transform: uppercase;
+      letter-spacing: -0.5px;
+      text-align: left;
+    }
+
+    .header-title-text span {
+      color: var(--primary-orange);
+      display: block;
+    }
+
+    .tagline-container {
+      text-align: center;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .heart-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 6px;
+      width: 100%;
+    }
+
+    .heart-divider::before, .heart-divider::after {
+      content: '';
+      width: 110px;
+      height: 1px;
+      background-color: #ffe1b3;
+    }
+
+    .heart-divider i {
+      color: var(--primary-orange);
+      font-size: 20px;
+    }
+
+    .tagline-text {
+      font-size: 15px;
+      color: var(--text-dark);
+      font-weight: 500;
+      max-width: 320px;
+      line-height: 1.35;
+      text-align: center;
+    }
+
+    .section-block {
+      background-color: var(--card-bg-light);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+    }
+
+    .block-question {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 14px;
+    }
+
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px 22px;
+      align-items: center;
+    }
+
+    .custom-check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-dark);
+      user-select: none;
+    }
+
+    .check-box {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--primary-orange);
+      border-radius: 3px;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .check-box i {
+      color: var(--primary-orange);
+      font-size: 14px;
+      display: none;
+    }
+
+    .custom-check.selected .check-box i {
+      display: block;
+    }
+
+    .other-line-input {
+      border: none;
+      border-bottom: 1px solid var(--line-gray);
+      background: transparent;
+      outline: none;
+      padding: 2px 6px;
+      font-size: 14px;
+      width: 170px;
+      color: var(--text-dark);
+    }
+
+    .cuentanos-section {
+      margin-bottom: 20px;
+      padding: 0 4px;
+    }
+
+    .cuentanos-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+
+    .notebook-textarea {
+      width: 100%;
+      height: 105px;
+      background: repeating-linear-gradient(
+        transparent,
+        transparent 34px,
+        var(--line-gray) 34px,
+        var(--line-gray) 35px
+      );
+      line-height: 35px;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      color: var(--text-dark);
+      resize: none;
+      padding-top: 2px;
+    }
+
+    .contact-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding: 0 4px;
+    }
+
+    .contact-icon {
+      color: var(--primary-orange);
+      font-size: 22px;
+      width: 24px;
+      text-align: center;
+    }
+
+    .contact-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-dark);
+      white-space: nowrap;
+    }
+
+    .contact-input {
+      flex: 1;
+      border: none;
+      border-bottom: 1px solid var(--line-gray);
+      outline: none;
+      padding: 2px 6px;
+      font-size: 14px;
+      color: var(--text-dark);
+      background: transparent;
+    }
+
+    .thanks-divider-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 6px;
+      margin-bottom: 4px;
+    }
+
+    .thanks-divider-row::before, .thanks-divider-row::after {
+      content: '';
+      width: 80px;
+      height: 1px;
+      background-color: #ffe1b3;
+    }
+
+    .thanks-text {
+      font-family: 'Dancing Script', cursive;
+      font-size: 32px;
+      color: var(--primary-orange);
+      font-weight: 700;
+    }
+
+    .footer-subtext {
+      text-align: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 18px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background-color: var(--primary-orange);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 12px;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      margin-bottom: 20px;
+      transition: background 0.2s;
+    }
+
+    .submit-btn:hover {
+      background-color: var(--primary-orange-hover);
+    }
+
+    .orange-bottom-wave {
+      background-color: var(--primary-orange);
+      height: 28px;
+      margin-left: -28px;
+      margin-right: -28px;
+      border-top-left-radius: 50% 12px;
+      border-top-right-radius: 50% 12px;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="outer-container">
+    <div class="sheet-card">
+      
+      <header class="header-logo-row">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4pI2kuU9yHfcqSTVqU8MeASVw43HQEog4uiZv-ZfouhW_Tww0uZ6ujZ1B&s=10" alt="Logo Urozen" class="brand-logo-img">
+        <div class="header-divider"></div>
+        <div class="header-title-text">
+          QUEREMOS <span>ESCUCHARTE</span>
+        </div>
+      </header>
+
+      <div class="tagline-container">
+        <div class="heart-divider">
+          <i class="fa-regular fa-heart"></i>
+        </div>
+        <p class="tagline-text">Tu opinión nos ayuda a seguir mejorando cada día.</p>
+      </div>
+
+      <form id="buzonForm">
+        <div class="section-block">
+          <h2 class="block-question">¿Qué deseas compartir con nosotros?</h2>
+          <div class="checkbox-group" id="groupCompartir">
+            <div class="custom-check" data-value="Sugerencia">
+              <div class="check-box"><i class="fa-solid fa-check"></i></div>
+              <span>Sugerencia</span>
+            </div>
+            <div class="custom-check" data-value="Comentario">
+              <div class="check-box"><i class="fa-solid fa-check"></i></div>
+              <span>Comentario</span>
+            </div>
+            <div class="custom-check" data-value="Felicitación">
+              <div class="check-box"><i class="fa-solid fa-check"></i></div>
+              <span>Felicitación</span>
+            </div>
+            <div class="custom-check" data-value="Otro" id="checkOtro">
+              <div class="check-box"><i class="fa-solid fa-check"></i></div>
+              <span>Otro:</span>
+              <input type="text" class="other-line-input" id="inputOtro" disabled>
+            </div>
+          </div>
+        </div>
+
+        <div class="cuentanos-section">
+          <h2 class="cuentanos-title">Cuéntanos:</h2>
+          <textarea class="notebook-textarea" id="cuentanosText" required></textarea>
+        </div>
+
+        <div class="section-block">
+          <h2 class="block-question">¿Deseas que nos comuniquemos contigo?</h2>
+          <div class="checkbox-group" id="groupContacto">
+            <div class="custom-check" data-value="Sí">
+              <div class="check-box"><i class="fa-solid fa-check"></i></div>
+              <span>Sí</span>
+            </div>
+            <div class="custom-check" data-value="No">
+              <div class="check-box"><i class="fa-solid fa-check"></i></div>
+              <span>No</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-row">
+          <i class="fa-regular fa-user contact-icon"></i>
+          <label class="contact-label" for="nombreInput">Nombre (opcional):</label>
+          <input type="text" class="contact-input" id="nombreInput">
+        </div>
+
+        <div class="contact-row">
+          <i class="fa-solid fa-phone contact-icon"></i>
+          <label class="contact-label" for="celularInput">Celular / WhatsApp (opcional):</label>
+          <input type="tel" class="contact-input" id="celularInput">
+        </div>
+
+        <div class="thanks-divider-row">
+          <span class="thanks-text">¡Gracias!</span>
+        </div>
+        <div class="footer-subtext">Tu opinión hace la diferencia.</div>
+
+        <button type="submit" class="submit-btn" id="btnSubmit">
+          <i class="fa-solid fa-paper-plane"></i> ENVIAR RESPUESTA
+        </button>
+      </form>
+
+      <div class="orange-bottom-wave"></div>
+    </div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyJun1CsoFbZR0q5r01HqVRzKUnHkb0BLjEmbqs4uJ4ADfXhr9itRg_GKdLQlrvF5OPXg/exec';
+
+    let tipoMensaje = null;
+    let deseaContacto = null;
+
+    const compartirChecks = document.querySelectorAll('#groupCompartir .custom-check');
+    const inputOtro = document.getElementById('inputOtro');
+
+    compartirChecks.forEach(check => {
+      check.addEventListener('click', (e) => {
+        if (e.target === inputOtro) return;
+
+        compartirChecks.forEach(c => c.classList.remove('selected'));
+        check.classList.add('selected');
+        
+        const val = check.getAttribute('data-value');
+        if (val === 'Otro') {
+          inputOtro.disabled = false;
+          inputOtro.focus();
+          tipoMensaje = 'Otro';
+        } else {
+          inputOtro.disabled = true;
+          inputOtro.value = '';
+          tipoMensaje = val;
+        }
+      });
+    });
+
+    const contactoChecks = document.querySelectorAll('#groupContacto .custom-check');
+    contactoChecks.forEach(check => {
+      check.addEventListener('click', () => {
+        contactoChecks.forEach(c => c.classList.remove('selected'));
+        check.classList.add('selected');
+        deseaContacto = check.getAttribute('data-value');
+      });
+    });
+
+    document.getElementById('buzonForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      let valorFinalTipo = tipoMensaje;
+      if (tipoMensaje === 'Otro' && inputOtro.value.trim() !== '') {
+        valorFinalTipo = 'Otro: ' + inputOtro.value.trim();
+      }
+
+      if (!valorFinalTipo) {
+        Swal.fire({
+          title: 'Atención',
+          text: 'Por favor selecciona qué deseas compartir con nosotros.',
+          icon: 'warning',
+          confirmButtonColor: '#ffa924'
+        });
+        return;
+      }
+
+      const submitBtn = document.getElementById('btnSubmit');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ENVIANDO...';
+
+      const formData = {
+        formType: 'buzon',
+        tipoMensaje: valorFinalTipo,
+        cuentanos: document.getElementById('cuentanosText').value,
+        deseaContacto: deseaContacto || 'No especificado',
+        nombre: document.getElementById('nombreInput').value,
+        celular: document.getElementById('celularInput').value
+      };
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      .then(() => {
+        /* Mensaje de confirmación sin la URL de GitHub arriba */
+        Swal.fire({
+          title: '¡Muchas gracias!',
+          text: 'Tus comentarios se han registrado correctamente.',
+          icon: 'success',
+          confirmButtonColor: '#ffa924',
+          confirmButtonText: 'Aceptar'
+        });
+        
+        document.getElementById('buzonForm').reset();
+        document.querySelectorAll('.custom-check').forEach(c => c.classList.remove('selected'));
+        inputOtro.disabled = true;
+        tipoMensaje = null;
+        deseaContacto = null;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      })
+      .catch(err => {
+        console.error(err);
+        Swal.fire({
+          title: 'Error',
+          text: 'Ocurrió un error al enviar. Por favor reintenta.',
+          icon: 'error',
+          confirmButtonColor: '#ffa924'
+        });
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> ENVIAR RESPUESTA';
+      });
+    });
+  </script>
+</body>
+</html>
