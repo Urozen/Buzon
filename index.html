@@ -275,12 +275,25 @@
       display: block;
     }
 
+    /* Contenedor fijo para correo + etiquetas: usa gap en vez de márgenes
+       para que no haya colapso de márgenes ni desplazamientos entre navegadores */
+    .correo-group {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .correo-group .contact-row {
+      margin-bottom: 0;
+    }
+
     /* Estilos para etiquetas rápidas de email */
     .email-quick-tags {
       display: flex;
       gap: 8px;
-      margin-top: 16px;
-      margin-bottom: 20px;
+      margin-top: 0;
+      margin-bottom: 0;
       padding-left: 38px;
       flex-wrap: wrap;
     }
@@ -528,17 +541,19 @@
         </div>
         <div class="field-error" id="celular-error">Debe tener 9 dígitos numéricos.</div>
 
-        <div class="contact-row">
-          <i class="fa-regular fa-envelope contact-icon"></i>
-          <label class="contact-label" for="correoInput">Correo electrónico (opcional):</label>
-          <input type="email" class="contact-input" id="correoInput" inputmode="email" autocomplete="email">
-        </div>
+        <div class="correo-group">
+          <div class="contact-row">
+            <i class="fa-regular fa-envelope contact-icon"></i>
+            <label class="contact-label" for="correoInput">Correo electrónico (opcional):</label>
+            <input type="email" class="contact-input" id="correoInput" inputmode="email" autocomplete="email">
+          </div>
 
-        <!-- Accesos rápidos para el correo -->
-        <div class="email-quick-tags">
-          <button type="button" class="tag-btn" onclick="appendDomain('@gmail.com')">+ @gmail.com</button>
-          <button type="button" class="tag-btn" onclick="appendDomain('@outlook.com')">+ @outlook.com</button>
-          <button type="button" class="tag-btn" onclick="appendDomain('@hotmail.com')">+ @hotmail.com</button>
+          <!-- Accesos rápidos para el correo -->
+          <div class="email-quick-tags">
+            <button type="button" class="tag-btn" onclick="appendDomain('@gmail.com')">+ @gmail.com</button>
+            <button type="button" class="tag-btn" onclick="appendDomain('@outlook.com')">+ @outlook.com</button>
+            <button type="button" class="tag-btn" onclick="appendDomain('@hotmail.com')">+ @hotmail.com</button>
+          </div>
         </div>
 
         <div class="thanks-divider-row">
