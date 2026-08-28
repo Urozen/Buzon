@@ -232,7 +232,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 14px;
+      margin-bottom: 4px;
       padding: 0 4px;
     }
 
@@ -261,6 +261,45 @@
       color: var(--text-dark);
       background: transparent;
       min-width: 0;
+    }
+
+    .field-error {
+      display: none;
+      font-size: 11px;
+      color: #d32f2f;
+      margin-bottom: 10px;
+      padding-left: 38px;
+    }
+
+    .field-error.show {
+      display: block;
+    }
+
+    /* Estilos para etiquetas rápidas de email */
+    .email-quick-tags {
+      display: flex;
+      gap: 8px;
+      margin-top: -6px;
+      margin-bottom: 14px;
+      padding-left: 38px;
+      flex-wrap: wrap;
+    }
+
+    .tag-btn {
+      background: var(--card-bg-light);
+      border: 1px solid var(--primary-orange);
+      border-radius: 12px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-dark);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tag-btn:hover {
+      background-color: var(--primary-orange);
+      color: #ffffff;
     }
 
     .thanks-divider-row {
@@ -393,6 +432,14 @@
         flex: none;
       }
 
+      .field-error {
+        padding-left: 0;
+      }
+
+      .email-quick-tags {
+        padding-left: 0;
+      }
+
       .thanks-divider-row::before, .thanks-divider-row::after {
         width: 40px;
       }
@@ -470,13 +517,28 @@
         <div class="contact-row">
           <i class="fa-regular fa-user contact-icon"></i>
           <label class="contact-label" for="nombreInput">Nombre (opcional):</label>
-          <input type="text" class="contact-input" id="nombreInput">
+          <input type="text" class="contact-input" id="nombreInput" maxlength="60">
         </div>
+        <div class="field-error" id="nombre-error">Solo se permiten letras y espacios.</div>
 
         <div class="contact-row">
           <i class="fa-solid fa-phone contact-icon"></i>
           <label class="contact-label" for="celularInput">Celular / WhatsApp (opcional):</label>
-          <input type="tel" class="contact-input" id="celularInput">
+          <input type="tel" class="contact-input" id="celularInput" inputmode="numeric" maxlength="9">
+        </div>
+        <div class="field-error" id="celular-error">Debe tener 9 dígitos numéricos.</div>
+
+        <div class="contact-row">
+          <i class="fa-regular fa-envelope contact-icon"></i>
+          <label class="contact-label" for="correoInput">Correo electrónico (opcional):</label>
+          <input type="email" class="contact-input" id="correoInput" inputmode="email" autocomplete="email">
+        </div>
+
+        <!-- Accesos rápidos para el correo -->
+        <div class="email-quick-tags">
+          <button type="button" class="tag-btn" onclick="appendDomain('@gmail.com')">+ @gmail.com</button>
+          <button type="button" class="tag-btn" onclick="appendDomain('@outlook.com')">+ @outlook.com</button>
+          <button type="button" class="tag-btn" onclick="appendDomain('@hotmail.com')">+ @hotmail.com</button>
         </div>
 
         <div class="thanks-divider-row">
@@ -494,7 +556,7 @@
   </div>
 
   <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyJun1CsoFbZR0q5r01HqVRzKUnHkb0BLjEmbqs4uJ4ADfXhr9itRg_GKdLQlrvF5OPXg/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKStTyk-6nBPGJlm0WEOZ78kU1vchkkk2u4VRI1NPH76UmIFMU2D-mVpXC1J0xQEvKEA/exec';
 
     let tipoMensaje = null;
     let deseaContacto = null;
@@ -531,6 +593,54 @@
       });
     });
 
+    // Función para completar el correo con un toque
+    function appendDomain(domain) {
+      const emailInput = document.getElementById('correoInput');
+      let val = emailInput.value.trim();
+
+      if (val.includes('@')) {
+        val = val.split('@')[0];
+      }
+      emailInput.value = val + domain;
+      emailInput.focus();
+    }
+
+    // --- Validación: nombre solo letras y espacios (incluye tildes y ñ) ---
+    const nombreInput = document.getElementById('nombreInput');
+    const nombreError = document.getElementById('nombre-error');
+    const nombreRegex = /[^a-zA-ZÀ-ÿñÑ\s]/g;
+
+    nombreInput.addEventListener('input', () => {
+      const original = nombreInput.value;
+      const cleaned = original.replace(nombreRegex, '');
+      if (cleaned !== original) {
+        nombreInput.value = cleaned;
+        nombreError.classList.add('show');
+      } else {
+        nombreError.classList.remove('show');
+      }
+    });
+
+    // --- Validación: celular solo números, máximo 9 dígitos ---
+    const celularInput = document.getElementById('celularInput');
+    const celularError = document.getElementById('celular-error');
+
+    celularInput.addEventListener('input', () => {
+      const original = celularInput.value;
+      let cleaned = original.replace(/[^0-9]/g, '');
+      if (cleaned.length > 9) {
+        cleaned = cleaned.slice(0, 9);
+      }
+      if (cleaned !== original) {
+        celularInput.value = cleaned;
+      }
+      if (cleaned.length > 0 && cleaned.length < 9) {
+        celularError.classList.add('show');
+      } else {
+        celularError.classList.remove('show');
+      }
+    });
+
     function resetFormulario() {
       document.getElementById('buzonForm').reset();
       document.querySelectorAll('.custom-check').forEach(c => c.classList.remove('selected'));
@@ -538,6 +648,8 @@
       inputOtro.value = '';
       tipoMensaje = null;
       deseaContacto = null;
+      nombreError.classList.remove('show');
+      celularError.classList.remove('show');
     }
 
     document.getElementById('buzonForm').addEventListener('submit', function(e) {
@@ -546,6 +658,13 @@
       let valorFinalTipo = tipoMensaje;
       if (tipoMensaje === 'Otro' && inputOtro.value.trim() !== '') {
         valorFinalTipo = 'Otro: ' + inputOtro.value.trim();
+      }
+
+      // Validación final de celular (si el usuario escribió algo, debe estar completo)
+      const celularVal = celularInput.value.trim();
+      if (celularVal.length > 0 && celularVal.length !== 9) {
+        alert('El número de celular debe tener 9 dígitos.');
+        return;
       }
 
       const submitBtn = document.getElementById('btnSubmit');
@@ -557,8 +676,9 @@
         tipoMensaje: valorFinalTipo || 'No especificado',
         cuentanos: document.getElementById('cuentanosText').value,
         deseaContacto: deseaContacto || 'No especificado',
-        nombre: document.getElementById('nombreInput').value,
-        celular: document.getElementById('celularInput').value
+        nombre: nombreInput.value,
+        celular: celularVal,
+        correo: document.getElementById('correoInput').value
       };
 
       fetch(SCRIPT_URL, {
